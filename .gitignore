@@ -1,0 +1,102 @@
+# ─── Monorepo root ignore (Flutter app + Laravel backend) ───
+
+# Claude Code local session state
+.claude/
+
+
+# ── OS / editor noise ──
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+
+# ── IDEs ──
+.idea/
+.vscode/
+.fleet/
+.nova/
+.zed/
+*.iml
+*.ipr
+*.iws
+.phpactor.json
+
+# ── Env / secrets (belt-and-suspenders — never commit) ──
+**/.env
+**/.env.backup
+**/.env.local
+**/.env.production
+**/.env.*.local
+**/auth.json
+
+# ── Flutter / Dart ──
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/build/
+**/generated_plugin_registrant.*
+**/doc/api/
+**/ios/Flutter/.last_build_id
+**/ios/Pods/
+**/ios/Runner.xcworkspace/xcuserdata/
+**/ios/Runner.xcodeproj/xcuserdata/
+**/macos/Pods/
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+app/android/app/debug/
+app/android/app/profile/
+app/android/app/release/
+app/android/.gradle/
+app/android/gradle/
+app/android/gradlew
+app/android/gradlew.bat
+app/android/local.properties
+app/android/key.properties
+app/android/keystore/
+*.keystore
+*.jks
+
+# Symbolication / obfuscation
+app.*.symbols
+app.*.map.json
+
+# ── Laravel / PHP ──
+backend/vendor/
+backend/node_modules/
+backend/public/build/
+backend/public/hot/
+backend/public/storage
+backend/storage/*.key
+backend/storage/framework/cache/data/
+backend/storage/framework/sessions/*
+backend/storage/framework/testing/*
+backend/storage/framework/views/*
+backend/storage/pail/
+backend/storage/logs/*.log
+backend/storage/debugbar/
+backend/.phpunit.cache/
+backend/.phpunit.result.cache
+backend/Homestead.json
+backend/Homestead.yaml
+backend/.env
+
+# Keep the storage folder structure — Laravel expects it — but skip contents
+!backend/storage/**/.gitignore
+!backend/storage/framework/
+!backend/storage/framework/cache/
+!backend/storage/framework/sessions/
+!backend/storage/framework/testing/
+!backend/storage/framework/views/
+!backend/storage/logs/
+
+# ── Uploaded user content (per-machine dev data — don't ship to git) ──
+backend/storage/app/public/profiles/
+
+# ── Coverage / test artefacts ──
+coverage/
+*.lcov
+
+# ── Migration working files ──
+migrate_working_dir/
