@@ -281,13 +281,12 @@ class _InterestsScreenState extends State<InterestsScreen>
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: (_canContinue() && !_isSubmitting) ? _handleContinue : null,
+                  onPressed: _isSubmitting ? null : _handleContinue,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    backgroundColor: _canContinue() ? null : Colors.grey[300],
                   ),
                   child: _isSubmitting
                       ? const SizedBox(
@@ -330,6 +329,7 @@ class _InterestsScreenState extends State<InterestsScreen>
 
   Widget _buildInterestsSection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: AppConstants.interestCategories.map((category) {
         return _buildInterestCategory(category);
       }).toList(),
@@ -338,54 +338,55 @@ class _InterestsScreenState extends State<InterestsScreen>
 
   Widget _buildInterestCategory(String category) {
     final categoryInterests = AppConstants.interests[category] ?? [];
-
-    return ExpansionTile(
-      title: Text(
-        category,
-        style: GoogleFonts.poppins(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: AppTheme.onSurfaceColor,
-        ),
-      ),
-      iconColor: AppTheme.primaryColor,
-      collapsedIconColor: AppTheme.primaryColor,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: categoryInterests.map((interest) {
-              final isSelected = _selectedInterests.contains(interest);
-              return GestureDetector(
-                onTap: () => _toggleInterest(interest),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppTheme.primaryColor
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected
-                          ? AppTheme.primaryColor
-                          : Colors.transparent,
-                    ),
-                  ),
-                  child: Text(
-                    interest,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.white : AppTheme.onSurfaceColor,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
+        Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppTheme.accentColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            category,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.primaryColor,
+            ),
           ),
         ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: categoryInterests.map((interest) {
+            final isSelected = _selectedInterests.contains(interest);
+            return GestureDetector(
+              onTap: () => _toggleInterest(interest),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppTheme.primaryColor : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? AppTheme.primaryColor : Colors.grey.shade300,
+                  ),
+                ),
+                child: Text(
+                  interest,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected ? Colors.white : AppTheme.onSurfaceColor,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -519,11 +520,17 @@ class _InterestsScreenState extends State<InterestsScreen>
     });
   }
 
-  bool _canContinue() {
-    if (_selectedInterests.length < 3) return false;
-    if (_selectedShowMe == null) return false;
-    if (_selectedAdminContact == null) return false;
-    return true;
+  String? _validate() {
+    if (_selectedInterests.length < 3) {
+      return 'Please select at least 3 interests so we can find your best matches.';
+    }
+    if (_selectedShowMe == null) {
+      return 'Please choose who you\'d like to be shown — Men, Women, or Everyone.';
+    }
+    if (_selectedAdminContact == null) {
+      return 'Please answer whether our administrator can contact you.';
+    }
+    return null;
   }
 
   Widget _buildYesNoRow({
@@ -595,7 +602,12 @@ class _InterestsScreenState extends State<InterestsScreen>
   bool _isSubmitting = false;
 
   void _handleContinue() async {
-    if (!_canContinue() || _isSubmitting) return;
+    if (_isSubmitting) return;
+    final error = _validate();
+    if (error != null) {
+      _showError(error);
+      return;
+    }
     setState(() => _isSubmitting = true);
 
     try {

@@ -149,7 +149,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen>
                           const SizedBox(height: AppConstants.xLargeSpacing),
 
                           // Nickname
-                          _buildSectionTitle('Nickname'),
+                          _buildSectionTitle('Preferred Name'),
                           TextFormField(
                             controller: _nicknameController,
                             textCapitalization: TextCapitalization.words,
@@ -162,10 +162,10 @@ class _BasicInfoScreenState extends State<BasicInfoScreen>
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Please enter a nickname';
+                                return 'Please enter a preferred name';
                               }
                               if (value.trim().length < 2) {
-                                return 'Nickname must be at least 2 characters';
+                                return 'Preferred name must be at least 2 characters';
                               }
                               return null;
                             },

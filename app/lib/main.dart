@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'router/app_router.dart';
 import 'services/auth_state.dart';
+import 'services/connectivity_service.dart';
 import 'theme/app_theme.dart';
 import 'utils/constants.dart';
+import 'widgets/offline_banner.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +19,10 @@ Future<void> main() async {
     ),
   );
 
-  await AuthState.instance.bootstrap();
+  await Future.wait([
+    AuthState.instance.bootstrap(),
+    ConnectivityService.instance.init(),
+  ]);
 
   runApp(const KingdomDatingApp());
 }
@@ -41,6 +46,7 @@ class _KingdomDatingAppState extends State<KingdomDatingApp> {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
       routerConfig: _router,
+      builder: (context, child) => OfflineBanner(child: child ?? const SizedBox.shrink()),
     );
   }
 }

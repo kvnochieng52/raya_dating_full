@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CounsellingController;
 use App\Http\Controllers\Api\DiscoveryController;
 use App\Http\Controllers\Api\MatchRequestController;
 use App\Http\Controllers\Api\MessageController;
@@ -37,4 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/matches/{match}/read', [MessageController::class, 'markRead']);
 
     Route::post('/match-requests', [MatchRequestController::class, 'store']);
+
+    Route::post('/counselling', [CounsellingController::class, 'store']);
+    Route::get('/counselling', [CounsellingController::class, 'index']);
 });

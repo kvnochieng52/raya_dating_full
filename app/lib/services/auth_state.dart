@@ -23,8 +23,37 @@ class AuthState extends ChangeNotifier {
 
   Future<void> bootstrap() async {
     final token = await AuthService.getToken();
-    _isAuthenticated = token != null && token.isNotEmpty;
-    _completedStep = await AuthService.getCompletedStep();
+    if (token == null || token.isEmpty) {
+      _isAuthenticated = false;
+      _completedStep = 0;
+      _initialized = true;
+      notifyListeners();
+      return;
+    }
+
+    // Validate the stored token against the server.
+    // On 401 → token is stale/invalid, clear session.
+    // On network error → assume still logged in (offline mode).
+    try {
+      final me = await AuthService.refreshMe(throwOnUnauth: true);
+      if (me != null) {
+        final profile = me['profile'] as Map<String, dynamic>?;
+        _completedStep = (profile?['completed_step'] as num?)?.toInt() ?? 0;
+      } else {
+        _completedStep = await AuthService.getCompletedStep();
+      }
+      _isAuthenticated = true;
+    } on AuthException {
+      // Token rejected by server — wipe local session.
+      await AuthService.logout();
+      _isAuthenticated = false;
+      _completedStep = 0;
+    } catch (_) {
+      // Unexpected error — fall back to cached state.
+      _isAuthenticated = true;
+      _completedStep = await AuthService.getCompletedStep();
+    }
+
     _initialized = true;
     notifyListeners();
   }

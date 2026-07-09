@@ -3,21 +3,20 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // ── Palette ──
-  // Deep plum + soft dusty rose + cream. Reads as "sacred and mature"
-  // without the Tinder-red loudness.
-  static const Color primaryColor = Color(0xFF4E1F4F);   // deep plum
-  static const Color secondaryColor = Color(0xFFD9A5A8); // soft dusty rose
-  static const Color accentColor = Color(0xFFF0DDDF);    // pale rose (surfaces)
+  // Deep crimson red + warm blush + cream.
+  static const Color primaryColor = Color(0xFFC0392B);   // deep crimson red
+  static const Color secondaryColor = Color(0xFFE8A0A0); // soft blush
+  static const Color accentColor = Color(0xFFFAE5E5);    // pale blush (surfaces)
   static const Color backgroundColor = Color(0xFFFDFBF6); // cream / ivory
   static const Color surfaceColor = Color(0xFFFFFFFF);
   static const Color errorColor = Color(0xFFBA1A1A);
   static const Color onPrimaryColor = Color(0xFFFFFFFF);
-  static const Color onSecondaryColor = Color(0xFF2E0E30);
+  static const Color onSecondaryColor = Color(0xFF5C0A0A);
   static const Color onSurfaceColor = Color(0xFF1F1520);
   static const Color onBackgroundColor = Color(0xFF1F1520);
   static const Color goldColor = Color(0xFFD4A017);      // sacred accent
-  static const Color deepRoseColor = Color(0xFF2E0E30);  // near-black plum
-  static const Color vibrantPinkColor = Color(0xFFD9A5A8); // aligned to secondary
+  static const Color deepRoseColor = Color(0xFF7B1111);  // deep red
+  static const Color vibrantPinkColor = Color(0xFFE8A0A0); // aligned to secondary
 
   // Gradient colors
   static const LinearGradient primaryGradient = LinearGradient(
@@ -32,19 +31,19 @@ class AppTheme {
     colors: [accentColor, Colors.white],
   );
 
-  // Splash: deep plum → medium plum → dusty rose.
+  // Splash: dark red → crimson → soft blush.
   static const LinearGradient splashGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xF02E0E30),
-      Color(0xDD4E1F4F),
-      Color(0xCCD9A5A8),
+      Color(0xF07B1111),
+      Color(0xDDC0392B),
+      Color(0xCCE8A0A0),
     ],
   );
 
   // Keep for backward compat
-  static const Color deepPurpleColor = Color(0xFF2D0A4E);
+  static const Color deepPurpleColor = Color(0xFF7B1111);
 
   static ThemeData get lightTheme {
     return ThemeData(

@@ -16,6 +16,7 @@ import '../discovery/discovery_screen.dart';
 import '../discovery/likes_screen.dart';
 import '../matching/match_request_screen.dart';
 import '../profile/photo_upload_screen.dart';
+import '../counselling/counselling_screen.dart';
 import '../settings/privacy_settings_screen.dart';
 
 class MainDashboard extends StatefulWidget {
@@ -115,12 +116,13 @@ class _MainDashboardState extends State<MainDashboard>
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(Icons.explore_outlined, Icons.explore, 'Discover', 0),
               _buildNavItem(Icons.favorite_border, Icons.favorite, 'Matches', 1),
+              _buildCounsellingButton(),
               _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 'Chat', 2),
               _buildNavItem(Icons.person_outline, Icons.person, 'Profile', 3),
             ],
@@ -130,6 +132,49 @@ class _MainDashboardState extends State<MainDashboard>
     );
   }
 
+
+  Widget _buildCounsellingButton() {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const CounsellingScreen()),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x59C0392B),
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.psychology_rounded,
+                color: Colors.white, size: 20),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Counsel',
+            style: GoogleFonts.poppins(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildNavItem(IconData inactiveIcon, IconData activeIcon, String label, int index) {
     final isSelected = _selectedIndex == index;

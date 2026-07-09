@@ -110,7 +110,7 @@ class AuthService {
   /// Pulls a fresh `{user, profile}` snapshot from `/api/me` and updates
   /// SharedPreferences + AuthState. Used to re-hydrate state after launch or
   /// after a profile mutation succeeds out-of-band.
-  static Future<Map<String, dynamic>?> refreshMe() async {
+  static Future<Map<String, dynamic>?> refreshMe({bool throwOnUnauth = false}) async {
     final token = await getToken();
     if (token == null) return null;
     try {
@@ -120,6 +120,10 @@ class AuthService {
             headers: _authHeaders(token),
           )
           .timeout(ApiConfig.receiveTimeout);
+      if (response.statusCode == 401) {
+        if (throwOnUnauth) throw AuthException('Unauthenticated.');
+        return null;
+      }
       if (response.statusCode != 200) return null;
       final body = _decode(response);
       await _persistSession({
@@ -128,7 +132,10 @@ class AuthService {
         'profile': body['profile'],
       });
       return body;
+    } on AuthException {
+      rethrow;
     } catch (_) {
+      // Network unavailable — caller uses cached state.
       return null;
     }
   }
