@@ -9,6 +9,7 @@ class CounsellingRequest extends Model
 {
     protected $fillable = [
         'user_id',
+        'requester_name',
         'counselor_gender',
         'contact_phone',
         'contact_email',

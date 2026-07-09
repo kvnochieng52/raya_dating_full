@@ -8,7 +8,8 @@ import '../../utils/api_config.dart';
 import 'package:http/http.dart' as http;
 
 class CounsellingScreen extends StatefulWidget {
-  const CounsellingScreen({super.key});
+  final bool isPublic;
+  const CounsellingScreen({super.key, this.isPublic = false});
 
   @override
   State<CounsellingScreen> createState() => _CounsellingScreenState();
@@ -16,6 +17,7 @@ class CounsellingScreen extends StatefulWidget {
 
 class _CounsellingScreenState extends State<CounsellingScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -57,6 +59,7 @@ class _CounsellingScreenState extends State<CounsellingScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
     _descriptionController.dispose();
@@ -241,6 +244,15 @@ class _CounsellingScreenState extends State<CounsellingScreen> {
 
             // Section 2: Contact details
             _sectionTitle('Your Contact Details', Icons.contact_phone_outlined),
+            if (widget.isPublic) ...[
+              TextFormField(
+                controller: _nameController,
+                textCapitalization: TextCapitalization.words,
+                style: GoogleFonts.poppins(fontSize: 14),
+                decoration: _inputDecoration('Your full name', Icons.person_outline),
+              ),
+              const SizedBox(height: 12),
+            ],
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
@@ -556,6 +568,9 @@ class _CounsellingScreenState extends State<CounsellingScreen> {
     if (_communicationModes.isEmpty) {
       return 'Please select how we should reach you.';
     }
+    if (widget.isPublic && _nameController.text.trim().isEmpty) {
+      return 'Please enter your full name.';
+    }
     if (_counsellingType == null) return 'Please choose an area of support.';
     if (_budgetRange == null) return 'Please select your budget.';
     if (_sessionFormat == null) return 'Please choose a session format.';
@@ -573,35 +588,41 @@ class _CounsellingScreenState extends State<CounsellingScreen> {
     setState(() => _submitting = true);
 
     try {
-      final token = await AuthService.getToken();
+      final isPublic = widget.isPublic;
+      final token = isPublic ? null : await AuthService.getToken();
+      final endpoint = isPublic
+          ? '${ApiConfig.baseUrl}/counselling/public'
+          : '${ApiConfig.baseUrl}/counselling';
+
+      final payload = {
+        if (isPublic) 'requester_name': _nameController.text.trim(),
+        'counselor_gender': _counselorGender,
+        'contact_phone': _phoneController.text.trim().isEmpty
+            ? null
+            : _phoneController.text.trim(),
+        'contact_email': _emailController.text.trim().isEmpty
+            ? null
+            : _emailController.text.trim(),
+        'communication_modes': _communicationModes,
+        'budget_range': _budgetRange,
+        'counselling_type': _counsellingType,
+        'session_format': _sessionFormat,
+        'preferred_days': _preferredDays,
+        'preferred_time': _preferredTime,
+        'urgency': _urgency,
+        'description': _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+      };
+
+      final headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      };
+
       final response = await http
-          .post(
-            Uri.parse('${ApiConfig.baseUrl}/counselling'),
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: jsonEncode({
-              'counselor_gender': _counselorGender,
-              'contact_phone': _phoneController.text.trim().isEmpty
-                  ? null
-                  : _phoneController.text.trim(),
-              'contact_email': _emailController.text.trim().isEmpty
-                  ? null
-                  : _emailController.text.trim(),
-              'communication_modes': _communicationModes,
-              'budget_range': _budgetRange,
-              'counselling_type': _counsellingType,
-              'session_format': _sessionFormat,
-              'preferred_days': _preferredDays,
-              'preferred_time': _preferredTime,
-              'urgency': _urgency,
-              'description': _descriptionController.text.trim().isEmpty
-                  ? null
-                  : _descriptionController.text.trim(),
-            }),
-          )
+          .post(Uri.parse(endpoint), headers: headers, body: jsonEncode(payload))
           .timeout(const Duration(seconds: 15));
 
       if (!mounted) return;
