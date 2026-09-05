@@ -23,12 +23,8 @@ class Profile extends Model
         'kids_count' => 'integer',
         'age_min' => 'integer',
         'age_max' => 'integer',
-        'max_distance' => 'integer',
         'completed_step' => 'integer',
         'interests' => 'array',
-        'latitude' => 'float',
-        'longitude' => 'float',
-        'location_updated_at' => 'datetime',
     ];
 
     protected $appends = ['selfie_url', 'selfie_uploaded'];

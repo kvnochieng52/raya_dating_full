@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/password/forgot', [AuthController::class, 'forgotPassword']);
+Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 Route::post('/counselling/public', [CounsellingController::class, 'publicStore']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -26,8 +28,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/verify/email/request', [ProfileController::class, 'requestEmailCode']);
     Route::post('/profile/verify/email', [ProfileController::class, 'verifyEmail']);
     Route::post('/profile/verify/selfie', [ProfileController::class, 'uploadSelfie']);
-
-    Route::post('/profile/location', [DiscoveryController::class, 'updateLocation']);
 
     Route::get('/discovery', [DiscoveryController::class, 'feed']);
     Route::post('/swipes', [DiscoveryController::class, 'swipe']);

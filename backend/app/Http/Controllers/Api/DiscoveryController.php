@@ -22,23 +22,6 @@ class DiscoveryController extends Controller
      */
     private const MIN_DISCOVERY_STEP = 4;
 
-    public function updateLocation(Request $request): JsonResponse
-    {
-        $data = $request->validate([
-            'latitude' => ['required', 'numeric', 'between:-90,90'],
-            'longitude' => ['required', 'numeric', 'between:-180,180'],
-        ]);
-
-        $user = $request->user();
-        $profile = $user->profile()->firstOrCreate(['user_id' => $user->id]);
-        $profile->latitude = $data['latitude'];
-        $profile->longitude = $data['longitude'];
-        $profile->location_updated_at = now();
-        $profile->save();
-
-        return response()->json(['profile' => $profile->fresh()]);
-    }
-
     public function feed(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -50,7 +33,6 @@ class DiscoveryController extends Controller
             'limit' => ['sometimes', 'integer', 'min:1', 'max:50'],
             'min_age' => ['sometimes', 'integer', 'min:18', 'max:120'],
             'max_age' => ['sometimes', 'integer', 'min:18', 'max:120', 'gte:min_age'],
-            'max_distance' => ['sometimes', 'integer', 'min:1', 'max:1000'],
             'show_me' => ['sometimes', Rule::in(['Men', 'Women', 'Everyone'])],
             'interests' => ['sometimes', 'array', 'max:50'],
             'interests.*' => ['string', 'max:50'],
@@ -60,7 +42,6 @@ class DiscoveryController extends Controller
         $limit = $filters['limit'] ?? 20;
         $minAge = $filters['min_age'] ?? $profile->age_min ?? 18;
         $maxAge = $filters['max_age'] ?? $profile->age_max ?? 99;
-        $maxDistance = $filters['max_distance'] ?? $profile->max_distance;
         $showMe = $filters['show_me'] ?? $profile->show_me ?? 'Everyone';
         $interestFilters = $filters['interests'] ?? null;
         $verifiedOnly = $request->boolean('verified_only');
@@ -108,31 +89,11 @@ class DiscoveryController extends Controller
 
         $candidates = $query->limit($limit * 3)->get();
 
-        $hasLocation = $profile->latitude !== null && $profile->longitude !== null;
-        $results = $candidates->map(function (Profile $p) use ($profile, $hasLocation) {
-            $distance = null;
-            if ($hasLocation && $p->latitude !== null && $p->longitude !== null) {
-                $distance = $this->haversineKm(
-                    $profile->latitude, $profile->longitude,
-                    $p->latitude, $p->longitude
-                );
-            }
+        $results = $candidates->map(function (Profile $p) {
             $arr = $p->toArray();
-            $arr['distance_km'] = $distance !== null ? round($distance, 1) : null;
             $arr['age'] = $p->birth_date ? $p->birth_date->age : null;
             return $arr;
         });
-
-        // Distance filter intentionally disabled — let users browse profiles
-        // from everywhere for now. `distance_km` is still computed and
-        // returned so cards can display it, but it is not used as a gate.
-        // Re-enable by un-suppressing the variable and restoring this block:
-        //   if ($hasLocation && $maxDistance !== null) {
-        //       $results = $results->filter(
-        //           fn ($p) => $p['distance_km'] === null || $p['distance_km'] <= $maxDistance
-        //       )->values();
-        //   }
-        unset($maxDistance);
 
         return response()->json([
             'profiles' => $results->take($limit)->values(),
@@ -331,18 +292,5 @@ class DiscoveryController extends Controller
             'matched_at' => $match->matched_at,
             'profile' => $partnerProfile,
         ];
-    }
-
-    /**
-     * Great-circle distance in kilometres.
-     */
-    private function haversineKm(float $lat1, float $lon1, float $lat2, float $lon2): float
-    {
-        $earthKm = 6371.0;
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-        $a = sin($dLat / 2) ** 2
-            + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) ** 2;
-        return $earthKm * 2 * atan2(sqrt($a), sqrt(1 - $a));
     }
 }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title', 'Kingdom Dating')</title>
+    <meta name="description" content="@yield('description', 'Kingdom Dating — faith-first Christian dating.')">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #2c2c2c;
+            background: #fafafa;
+        }
+        a { color: #C0392B; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        header {
+            background: #C0392B;
+            color: #fff;
+            padding: 20px 24px;
+        }
+        header .brand {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        header .brand a { color: #fff; font-weight: 600; font-size: 20px; text-decoration: none; }
+        header .brand a:hover { opacity: 0.9; }
+        header nav { margin-left: auto; display: flex; gap: 20px; }
+        header nav a { color: #fff; font-size: 14px; }
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+            background: #fff;
+            min-height: calc(100vh - 200px);
+        }
+        h1 { color: #C0392B; font-size: 32px; margin: 0 0 8px; }
+        h2 { color: #2c2c2c; font-size: 20px; margin: 32px 0 12px; }
+        p, ul, ol { margin: 0 0 16px; }
+        ul, ol { padding-left: 24px; }
+        li { margin-bottom: 6px; }
+        .updated { color: #888; font-size: 14px; margin-bottom: 32px; }
+        .contact-block {
+            background: #fdf5f4;
+            border-left: 4px solid #C0392B;
+            padding: 16px 20px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+        .contact-block strong { display: inline-block; min-width: 80px; }
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #888;
+            font-size: 14px;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 24px; }
+            header .brand { flex-direction: column; align-items: flex-start; gap: 8px; }
+            header nav { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <a href="{{ url('/') }}">Kingdom Dating</a>
+            <nav>
+                <a href="{{ url('/privacy') }}">Privacy</a>
+                <a href="{{ url('/contact') }}">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        @yield('content')
+    </main>
+
+    <footer>
+        &copy; {{ date('Y') }} Kingdom Dating. All rights reserved.
+    </footer>
+</body>
+</html>

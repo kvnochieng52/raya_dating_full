@@ -84,10 +84,6 @@ class ProfileSeeder extends Seeder
             'Looking for a partner who challenges me to grow.',
         ];
 
-        // Centre on Nairobi; spread within ~5 km.
-        $baseLat = -1.2864;
-        $baseLng = 36.8172;
-
         foreach ($men as $i => [$nickname, $fullName, $photoIds]) {
             $this->createSeededUser(
                 index: $i + 1,
@@ -104,8 +100,6 @@ class ProfileSeeder extends Seeder
                 financial: $financial,
                 interestPool: $interestPool,
                 bios: $bios,
-                baseLat: $baseLat,
-                baseLng: $baseLng,
             );
         }
 
@@ -125,8 +119,6 @@ class ProfileSeeder extends Seeder
                 financial: $financial,
                 interestPool: $interestPool,
                 bios: $bios,
-                baseLat: $baseLat,
-                baseLng: $baseLng,
             );
         }
     }
@@ -146,8 +138,6 @@ class ProfileSeeder extends Seeder
         array $financial,
         array $interestPool,
         array $bios,
-        float $baseLat,
-        float $baseLng,
     ): void {
         $genderSlug = strtolower($gender);
         $email = "seed.{$genderSlug}.{$index}@kingdomdating.test";
@@ -172,10 +162,6 @@ class ProfileSeeder extends Seeder
         $showMe = $gender === 'Man' ? 'Women' : 'Men';
         $isBeliever = $index % 5 !== 0; // ~80% believers
         $hasKids = $index % 4 === 0;    // ~25% have kids
-
-        // Spread 0..0.05 degrees from base (≈ up to ~5.5 km).
-        $latJitter = (($index * 137) % 1000 - 500) / 10000;
-        $lngJitter = (($index * 211) % 1000 - 500) / 10000;
 
         $profile = $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
@@ -204,16 +190,11 @@ class ProfileSeeder extends Seeder
                 'show_me' => $showMe,
                 'age_min' => 22,
                 'age_max' => 45,
-                'max_distance' => 80,
                 'admin_contact_consent' => false,
 
                 // Mix of verification states.
                 'email_verified' => $index % 3 !== 0,
                 'phone_verified' => $index % 4 === 0,
-
-                'latitude' => $baseLat + $latJitter,
-                'longitude' => $baseLng + $lngJitter,
-                'location_updated_at' => now(),
 
                 'completed_step' => 5,
             ],

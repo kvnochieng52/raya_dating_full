@@ -93,7 +93,6 @@ class ProfileController extends Controller
             'show_me' => ['sometimes', Rule::in(self::SHOW_ME)],
             'age_min' => ['sometimes', 'integer', 'min:18', 'max:120'],
             'age_max' => ['sometimes', 'integer', 'min:18', 'max:120', 'gte:age_min'],
-            'max_distance' => ['sometimes', 'integer', 'min:1', 'max:500'],
             'admin_contact_consent' => ['sometimes', 'boolean'],
             'admin_contact_time' => [
                 'sometimes', 'nullable', 'string', 'max:100',

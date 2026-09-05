@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasswordResetCode;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -80,6 +83,84 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Logged out.',
+        ]);
+    }
+
+    /**
+     * Emails a 6-digit reset code to the user if one exists. To avoid leaking
+     * which emails are registered, we return the same 200 response either way.
+     */
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'string', 'email:rfc', 'max:255'],
+        ]);
+
+        $genericResponse = response()->json([
+            'message' => 'If an account exists for that email, a reset code has been sent.',
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+        if (! $user) {
+            return $genericResponse;
+        }
+
+        $code = (string) random_int(100000, 999999);
+        $expiresAt = Carbon::now()->addMinutes(15);
+
+        // One active code per user — wipe older entries.
+        PasswordResetCode::where('user_id', $user->id)->delete();
+        PasswordResetCode::create([
+            'user_id' => $user->id,
+            'code' => $code,
+            'expires_at' => $expiresAt,
+        ]);
+
+        Mail::raw(
+            "Your Kingdom Dating password reset code is: $code\n\n" .
+            'This code expires in 15 minutes. If you did not request a password reset, you can safely ignore this message.',
+            function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Your Kingdom Dating password reset code');
+            }
+        );
+
+        return $genericResponse;
+    }
+
+    /**
+     * Verifies the code, updates the password, and revokes existing sessions so
+     * a compromised device is signed out.
+     */
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'string', 'email:rfc'],
+            'code' => ['required', 'string', 'size:6'],
+            'password' => ['required', 'confirmed', 'string', 'min:6', 'max:255'],
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+        $entry = $user
+            ? PasswordResetCode::where('user_id', $user->id)->latest('id')->first()
+            : null;
+
+        if (! $user || ! $entry || $entry->code !== $data['code'] || $entry->isExpired()) {
+            return response()->json([
+                'message' => 'That code is invalid or expired. Request a new one.',
+                'errors' => ['code' => ['Invalid or expired code.']],
+            ], 422);
+        }
+
+        $user->password = $data['password'];
+        $user->save();
+
+        // Burn all reset codes and existing API tokens — force re-login.
+        PasswordResetCode::where('user_id', $user->id)->delete();
+        $user->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Password updated. Please sign in with your new password.',
         ]);
     }
 

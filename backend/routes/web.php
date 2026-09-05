@@ -5,3 +5,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::view('/privacy', 'privacy')->name('privacy');
+Route::view('/contact', 'contact')->name('contact');
