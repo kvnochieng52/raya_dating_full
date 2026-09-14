@@ -8,5 +8,6 @@ Route::get('/', function () {
 });
 
 Route::view('/privacy', 'privacy')->name('privacy');
+Route::view('/safety',  'safety')->name('safety');
 Route::get('/contact',  [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');

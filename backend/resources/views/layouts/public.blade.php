@@ -140,6 +140,7 @@
                 </svg>Kingdom Dating
             </a>
             <nav>
+                <a href="{{ url('/safety') }}">Safety</a>
                 <a href="{{ url('/privacy') }}">Privacy</a>
                 <a href="{{ url('/contact') }}">Contact</a>
             </nav>
