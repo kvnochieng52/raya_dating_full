@@ -134,7 +134,7 @@
             handled, contact us:
         </p>
         <p style="margin: 12px 0 0;">
-            <strong>Email:</strong> <a href="mailto:dev@ke.wananchi.com">dev@ke.wananchi.com</a>
+            <strong>Email:</strong> <a href="mailto:kingdomdating31@gmail.com">kingdomdating31@gmail.com</a>
         </p>
     </div>
 @endsection

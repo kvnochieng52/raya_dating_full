@@ -60,6 +60,66 @@
             color: #888;
             font-size: 14px;
         }
+        /* Contact form */
+        .contact-form { margin: 0 0 40px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #2c2c2c;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #2c2c2c;
+            background: #fff;
+            transition: border-color .15s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #C0392B;
+            box-shadow: 0 0 0 3px rgba(192,57,43,.12);
+        }
+        .form-group textarea { resize: vertical; min-height: 130px; }
+        .btn-submit {
+            background: #C0392B;
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s;
+        }
+        .btn-submit:hover { background: #a93226; }
+        .alert-success {
+            background: #eafaf1;
+            border-left: 4px solid #27ae60;
+            padding: 14px 18px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            color: #1e8449;
+            font-weight: 500;
+        }
+        .alert-error {
+            background: #fdf2f2;
+            border-left: 4px solid #C0392B;
+            padding: 14px 18px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            color: #922b21;
+        }
         @media (max-width: 600px) {
             h1 { font-size: 24px; }
             header .brand { flex-direction: column; align-items: flex-start; gap: 8px; }
