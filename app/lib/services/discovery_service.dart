@@ -8,22 +8,9 @@ import '../utils/api_config.dart';
 import 'auth_service.dart';
 
 class DiscoveryService {
-  static Future<Map<String, dynamic>> updateLocation({
-    required double latitude,
-    required double longitude,
-  }) async {
-    final response = await _request(
-      'POST',
-      '/profile/location',
-      jsonBody: {'latitude': latitude, 'longitude': longitude},
-    );
-    return _handle(response, expected: 200);
-  }
-
   static Future<List<Map<String, dynamic>>> fetchFeed({
     int? minAge,
     int? maxAge,
-    int? maxDistanceKm,
     String? showMe,
     List<String>? interests,
     bool? verifiedOnly,
@@ -33,7 +20,6 @@ class DiscoveryService {
       'limit': limit.toString(),
       if (minAge != null) 'min_age': minAge.toString(),
       if (maxAge != null) 'max_age': maxAge.toString(),
-      if (maxDistanceKm != null) 'max_distance': maxDistanceKm.toString(),
       if (showMe != null) 'show_me': showMe,
       if (interests != null && interests.isNotEmpty) 'interests[]': interests,
       if (verifiedOnly == true) 'verified_only': '1',

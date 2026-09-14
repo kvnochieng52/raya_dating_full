@@ -1,5 +1,5 @@
 class ApiConfig {
-  static const String baseUrl = 'http://69.30.235.169:9412/api';
+  static const String baseUrl = 'https://kingdom-dating.co.ke/api';
 
   static const Duration connectTimeout = Duration(seconds: 10);
   static const Duration receiveTimeout = Duration(seconds: 15);
@@ -8,6 +8,8 @@ class ApiConfig {
   static const String login = '/login';
   static const String me = '/me';
   static const String logout = '/logout';
+  static const String passwordForgot = '/password/forgot';
+  static const String passwordReset = '/password/reset';
 
   static const String profile = '/profile';
   static const String profilePhotos = '/profile/photos';

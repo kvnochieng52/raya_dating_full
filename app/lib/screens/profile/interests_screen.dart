@@ -23,7 +23,6 @@ class _InterestsScreenState extends State<InterestsScreen>
   List<String> _selectedInterests = [];
   String? _selectedShowMe;
   RangeValues _ageRange = const RangeValues(22, 35);
-  double _distance = 25;
   String? _selectedAdminContact;
   final _adminTimeController = TextEditingController();
   final _adminNumberController = TextEditingController();
@@ -73,7 +72,6 @@ class _InterestsScreenState extends State<InterestsScreen>
 
       final ageMin = (profile['age_min'] as int?)?.toDouble();
       final ageMax = (profile['age_max'] as int?)?.toDouble();
-      final distance = (profile['max_distance'] as int?)?.toDouble();
       final adminConsent = profile['admin_contact_consent'];
 
       setState(() {
@@ -85,7 +83,6 @@ class _InterestsScreenState extends State<InterestsScreen>
         if (ageMin != null && ageMax != null && ageMax >= ageMin) {
           _ageRange = RangeValues(ageMin, ageMax);
         }
-        if (distance != null) _distance = distance;
         if (adminConsent != null) {
           _selectedAdminContact = adminConsent == true ? 'Yes' : 'No';
         }
@@ -195,12 +192,6 @@ class _InterestsScreenState extends State<InterestsScreen>
                         // Age Range Section
                         _buildSectionTitle('Age Range'),
                         _buildAgeRangeSlider(),
-
-                        const SizedBox(height: AppConstants.xLargeSpacing),
-
-                        // Distance Section
-                        _buildSectionTitle('Maximum Distance'),
-                        _buildDistanceSlider(),
 
                         const SizedBox(height: AppConstants.xLargeSpacing),
 
@@ -468,48 +459,6 @@ class _InterestsScreenState extends State<InterestsScreen>
     );
   }
 
-  Widget _buildDistanceSlider() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Distance',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: AppTheme.onSurfaceColor,
-              ),
-            ),
-            Text(
-              '${_distance.round()} km',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.primaryColor,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Slider(
-          value: _distance,
-          min: 1,
-          max: 100,
-          divisions: 99,
-          label: '${_distance.round()} km',
-          activeColor: AppTheme.primaryColor,
-          inactiveColor: Colors.grey[300],
-          onChanged: (double value) {
-            setState(() {
-              _distance = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
   void _toggleInterest(String interest) {
     setState(() {
       if (_selectedInterests.contains(interest)) {
@@ -619,7 +568,6 @@ class _InterestsScreenState extends State<InterestsScreen>
           'show_me': _selectedShowMe,
           'age_min': _ageRange.start.round(),
           'age_max': _ageRange.end.round(),
-          'max_distance': _distance.round(),
           'admin_contact_consent': wantsContact,
           if (wantsContact) ...{
             'admin_contact_time': _adminTimeController.text.trim(),

@@ -63,6 +63,40 @@ class AuthService {
     throw _toException(response, body);
   }
 
+  /// Kicks off the password-reset flow. The API responds 200 whether or not the
+  /// email is registered, so callers should always advance to the code screen.
+  static Future<String> requestPasswordReset({required String email}) async {
+    final response = await _post(ApiConfig.passwordForgot, {'email': email});
+    final body = _decode(response);
+    if (response.statusCode == 200) {
+      return (body['message'] as String?) ??
+          'If an account exists for that email, a reset code has been sent.';
+    }
+    throw _toException(response, body);
+  }
+
+  /// Submits the emailed code plus a new password. On success the server
+  /// revokes existing tokens, so the caller must send the user to /login.
+  static Future<String> resetPassword({
+    required String email,
+    required String code,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final response = await _post(ApiConfig.passwordReset, {
+      'email': email,
+      'code': code,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+    });
+    final body = _decode(response);
+    if (response.statusCode == 200) {
+      return (body['message'] as String?) ??
+          'Password updated. Please sign in with your new password.';
+    }
+    throw _toException(response, body);
+  }
+
   static Future<void> logout() async {
     final token = await getToken();
     if (token != null) {

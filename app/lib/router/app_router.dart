@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/auth/welcome_screen.dart';
 import '../screens/dashboard/main_dashboard.dart';
 import '../screens/discovery/discovery_screen.dart';
 import '../screens/discovery/likes_screen.dart';
-import '../screens/permissions/location_permission_screen.dart';
 import '../screens/profile/profile_setup_screen.dart';
 import '../screens/settings/privacy_settings_screen.dart';
 import '../screens/splash_screen.dart';
@@ -19,10 +19,10 @@ class AppRoutes {
   static const welcome = '/welcome';
   static const login = '/login';
   static const signup = '/signup';
+  static const forgotPassword = '/forgot-password';
 
   // Protected
   static const profileSetup = '/profile-setup';
-  static const locationPermission = '/location-permission';
   static const dashboard = '/dashboard';
   static const discovery = '/discovery';
   static const likes = '/likes';
@@ -34,12 +34,14 @@ class AppRoutes {
     welcome,
     login,
     signup,
+    forgotPassword,
   };
 
   static const _authOnlyRoutes = <String>{
     welcome,
     login,
     signup,
+    forgotPassword,
   };
 
   static bool isPublic(String path) => _publicRoutes.contains(path);
@@ -97,12 +99,12 @@ GoRouter buildRouter() {
         builder: (context, state) => const SignUpScreen(),
       ),
       GoRoute(
-        path: AppRoutes.profileSetup,
-        builder: (context, state) => const ProfileSetupScreen(),
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
       GoRoute(
-        path: AppRoutes.locationPermission,
-        builder: (context, state) => const LocationPermissionScreen(),
+        path: AppRoutes.profileSetup,
+        builder: (context, state) => const ProfileSetupScreen(),
       ),
       GoRoute(
         path: AppRoutes.dashboard,

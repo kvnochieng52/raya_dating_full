@@ -18,7 +18,6 @@ class FiltersScreen extends StatefulWidget {
 
 class _FiltersScreenState extends State<FiltersScreen> {
   late RangeValues _ageRange;
-  late double _distance;
   late List<String> _selectedGenders;
   late List<String> _selectedInterests;
   late bool _onlineOnly;
@@ -31,7 +30,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
       widget.currentFilters.minAge.toDouble(),
       widget.currentFilters.maxAge.toDouble(),
     );
-    _distance = widget.currentFilters.maxDistance;
     _selectedGenders = List.from(widget.currentFilters.genders);
     _selectedInterests = List.from(widget.currentFilters.interests);
     _onlineOnly = widget.currentFilters.onlineOnly;
@@ -76,8 +74,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildAgeRangeSection(),
-            const SizedBox(height: AppConstants.xLargeSpacing),
-            _buildDistanceSection(),
             const SizedBox(height: AppConstants.xLargeSpacing),
             _buildGenderSection(),
             const SizedBox(height: AppConstants.xLargeSpacing),
@@ -146,48 +142,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
           inactiveColor: Colors.grey[300],
           onChanged: (RangeValues values) {
             setState(() => _ageRange = values);
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDistanceSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Maximum Distance'),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Distance',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: AppTheme.onSurfaceColor,
-              ),
-            ),
-            Text(
-              '${_distance.round()} km',
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.primaryColor,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Slider(
-          value: _distance,
-          min: 1,
-          max: 200,
-          divisions: 199,
-          label: '${_distance.round()} km',
-          activeColor: AppTheme.primaryColor,
-          inactiveColor: Colors.grey[300],
-          onChanged: (double value) {
-            setState(() => _distance = value);
           },
         ),
       ],
@@ -436,7 +390,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
   void _resetFilters() {
     setState(() {
       _ageRange = const RangeValues(18, 100);
-      _distance = 100;
       _selectedGenders.clear();
       _selectedInterests.clear();
       _onlineOnly = false;
@@ -448,7 +401,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
     final filters = FilterCriteria(
       minAge: _ageRange.start.round(),
       maxAge: _ageRange.end.round(),
-      maxDistance: _distance,
       genders: _selectedGenders,
       interests: _selectedInterests,
       onlineOnly: _onlineOnly,

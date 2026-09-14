@@ -512,7 +512,7 @@ class _VerificationScreenState extends State<VerificationScreen>
       return;
     }
     if (!mounted) return;
-    context.go(AppRoutes.locationPermission);
+    context.go(AppRoutes.dashboard);
   }
 
   void _handleSkip() {
@@ -538,7 +538,7 @@ class _VerificationScreenState extends State<VerificationScreen>
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              context.go(AppRoutes.locationPermission);
+              context.go(AppRoutes.dashboard);
             },
             child: Text(
               'Skip',

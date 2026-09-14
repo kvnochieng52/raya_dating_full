@@ -11,12 +11,9 @@ class UserProfile {
   final List<String> interests;
   final String occupation;
   final String education;
-  final double latitude;
-  final double longitude;
   final DateTime lastSeen;
   final bool isOnline;
   final bool isVerified;
-  final double? distanceKm;
 
   UserProfile({
     required this.id,
@@ -28,13 +25,10 @@ class UserProfile {
     required this.interests,
     required this.occupation,
     required this.education,
-    required this.latitude,
-    required this.longitude,
     required this.lastSeen,
     required this.isOnline,
     required this.isVerified,
     this.nickname,
-    this.distanceKm,
   });
 
   /// Prefer the nickname when set, otherwise fall back to the full name.
@@ -54,6 +48,10 @@ class UserProfile {
         .map((p) => (p as Map<String, dynamic>)['url'])
         .whereType<String>()
         .toList();
+    // ignore: avoid_print
+    for (final url in photoUrls) {
+      print('[IMG] ${json['nickname'] ?? json['user']?['name']} → $url');
+    }
     final rawNickname = (json['nickname'] as String?)?.trim();
     final hasNickname = rawNickname != null && rawNickname.isNotEmpty;
     final fullName = (user?['name'] as String?)?.trim() ?? 'Unknown';
@@ -70,22 +68,12 @@ class UserProfile {
           .toList(),
       occupation: (json['occupation'] as String?) ?? '',
       education: (json['education_level'] as String?) ?? '',
-      latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
-      longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
       lastSeen: DateTime.now(),
       isOnline: false,
       isVerified: (json['email_verified'] == true) ||
           (json['phone_verified'] == true) ||
           (json['selfie_uploaded'] == true),
-      distanceKm: (json['distance_km'] as num?)?.toDouble(),
     );
-  }
-
-  double distanceFrom(double lat, double lng) {
-    if (distanceKm != null) return distanceKm!;
-    final latDiff = latitude - lat;
-    final lngDiff = longitude - lng;
-    return (latDiff * latDiff + lngDiff * lngDiff) * 111;
   }
 
   Map<String, dynamic> toJson() {
@@ -99,8 +87,6 @@ class UserProfile {
       'interests': interests,
       'occupation': occupation,
       'education': education,
-      'latitude': latitude,
-      'longitude': longitude,
       'lastSeen': lastSeen.toIso8601String(),
       'isOnline': isOnline,
       'isVerified': isVerified,
@@ -118,8 +104,6 @@ class UserProfile {
       interests: List<String>.from(json['interests']),
       occupation: json['occupation'],
       education: json['education'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
       lastSeen: DateTime.parse(json['lastSeen']),
       isOnline: json['isOnline'],
       isVerified: json['isVerified'],
@@ -172,7 +156,6 @@ enum SwipeAction {
 class FilterCriteria {
   final int minAge;
   final int maxAge;
-  final double maxDistance;
   final List<String> genders;
   final List<String> interests;
   final bool onlineOnly;
@@ -181,22 +164,18 @@ class FilterCriteria {
   FilterCriteria({
     this.minAge = 18,
     this.maxAge = 100,
-    this.maxDistance = 100,
     this.genders = const [],
     this.interests = const [],
     this.onlineOnly = false,
     this.verifiedOnly = false,
   });
 
-  bool matches(UserProfile user, double userLat, double userLng) {
+  bool matches(UserProfile user) {
     // Age filter
     if (user.age < minAge || user.age > maxAge) return false;
 
     // Gender filter
     if (genders.isNotEmpty && !genders.contains(user.gender)) return false;
-
-    // Distance filter
-    if (user.distanceFrom(userLat, userLng) > maxDistance) return false;
 
     // Online filter
     if (onlineOnly && !user.isOnline) return false;

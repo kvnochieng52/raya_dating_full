@@ -31,18 +31,13 @@ class MatchingService {
     return 'Everyone';
   }
 
-  /// Fetches the discovery feed. The `userLat`/`userLng` args are accepted for
-  /// signature compatibility with the old in-memory service but ignored — the
-  /// backend computes distance against the caller's stored location.
+  /// Fetches the discovery feed.
   static Future<List<UserProfile>> getDiscoveryProfiles({
     FilterCriteria? filters,
-    double userLat = 0.0,
-    double userLng = 0.0,
   }) async {
     final raw = await DiscoveryService.fetchFeed(
       minAge: filters?.minAge,
       maxAge: filters?.maxAge,
-      maxDistanceKm: filters?.maxDistance.round(),
       showMe: filters != null ? _showMeFor(filters.genders) : null,
       interests: (filters?.interests.isNotEmpty ?? false)
           ? filters!.interests
