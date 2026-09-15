@@ -68,13 +68,17 @@
         }
         .nav-links a:hover { color: #C0392B; }
         .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             background: #C0392B;
             color: #fff !important;
             padding: 8px 18px;
             border-radius: 999px;
-            font-weight: 600 !important;
+            font-weight: 700 !important;
         }
         .nav-cta:hover { background: #a93226; }
+        .nav-cta svg { flex-shrink: 0; }
 
         /* ── Hero ──────────────────────────────────────────────── */
         .hero {
@@ -513,7 +517,15 @@
                 <a href="#features">Features</a>
                 <a href="{{ url('/safety') }}">Safety</a>
                 <a href="{{ url('/contact') }}">Contact</a>
-                <a href="https://play.google.com/store/apps/details?id=com.kingdomdating.app" class="nav-cta">Get the app</a>
+                <a href="https://play.google.com/store/apps/details?id=com.kingdomdating.app" class="nav-cta" target="_blank" rel="noopener">
+                    <svg width="16" height="18" viewBox="0 0 512 512">
+                        <path d="M99.6 12.4c-8.2 4.7-13.6 13.7-13.6 24v439.2c0 10.3 5.4 19.3 13.6 24l219.7-243.6L99.6 12.4z" fill="#EA4335"/>
+                        <path d="M366.6 165.1L282 213.1l30.2 33.5-30.2 33.5 84.6 48c9.9-8.4 15.8-20.9 15.8-33.5V198.6c0-12.6-5.9-25.1-15.8-33.5z" fill="#FBBC04"/>
+                        <path d="M99.6 12.4l219.7 243.6L282 213.1l84.6-48-267-152.7z" fill="#34A853"/>
+                        <path d="M99.6 499.6l267-152.7-84.6-48-37.3 42.9L99.6 499.6z" fill="#4285F4"/>
+                    </svg>
+                    Get the app
+                </a>
             </div>
         </div>
     </header>
