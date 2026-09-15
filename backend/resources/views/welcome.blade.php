@@ -507,6 +507,7 @@
                 Kingdom Dating
             </a>
             <div class="nav-links">
+                <a href="{{ url('/') }}">Home</a>
                 <a href="#features">Features</a>
                 <a href="#how">How it works</a>
                 <a href="{{ url('/safety') }}">Safety</a>
