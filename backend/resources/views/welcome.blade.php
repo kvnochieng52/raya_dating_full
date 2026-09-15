@@ -508,8 +508,9 @@
             </a>
             <div class="nav-links">
                 <a href="{{ url('/') }}">Home</a>
+                <a href="{{ url('/about') }}">About</a>
+                <a href="{{ url('/therapy') }}">Counselling</a>
                 <a href="#features">Features</a>
-                <a href="#how">How it works</a>
                 <a href="{{ url('/safety') }}">Safety</a>
                 <a href="{{ url('/contact') }}">Contact</a>
                 <a href="https://play.google.com/store/apps/details?id=com.kingdomdating.app" class="nav-cta">Get the app</a>
@@ -810,6 +811,8 @@
             <div>
                 <h5>Company</h5>
                 <ul>
+                    <li><a href="{{ url('/about') }}">About us</a></li>
+                    <li><a href="{{ url('/therapy') }}">Counselling</a></li>
                     <li><a href="{{ url('/safety') }}">Safety standards</a></li>
                     <li><a href="{{ url('/privacy') }}">Privacy policy</a></li>
                     <li><a href="{{ url('/contact') }}">Contact us</a></li>

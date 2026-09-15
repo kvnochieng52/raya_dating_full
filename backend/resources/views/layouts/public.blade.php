@@ -141,6 +141,8 @@
             </a>
             <nav>
                 <a href="{{ url('/') }}">Home</a>
+                <a href="{{ url('/about') }}">About</a>
+                <a href="{{ url('/therapy') }}">Counselling</a>
                 <a href="{{ url('/safety') }}">Safety</a>
                 <a href="{{ url('/privacy') }}">Privacy</a>
                 <a href="{{ url('/contact') }}">Contact</a>
