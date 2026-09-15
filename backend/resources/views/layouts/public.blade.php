@@ -32,7 +32,7 @@
         header .brand a { color: #fff; font-weight: 600; font-size: 20px; text-decoration: none; }
         header .brand a:hover { opacity: 0.9; }
         header nav { margin-left: auto; display: flex; gap: 20px; }
-        header nav a { color: #fff; font-size: 14px; }
+        header nav a { color: #fff; font-size: 14px; font-weight: 700; }
         main {
             max-width: 800px;
             margin: 0 auto;

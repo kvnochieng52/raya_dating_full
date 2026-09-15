@@ -62,9 +62,9 @@
             align-items: center;
         }
         .nav-links a {
-            color: #555;
+            color: #333;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 700;
         }
         .nav-links a:hover { color: #C0392B; }
         .nav-cta {
