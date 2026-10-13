@@ -217,7 +217,7 @@
         }
         .phone-card .avatar {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: url('{{ asset('images/hero-main.jpg') }}') center/cover no-repeat;
+            background: url('{{ asset('images/cover.png') }}') center/cover no-repeat;
             filter: brightness(.9);
         }
         .phone-card .avatar::after {
