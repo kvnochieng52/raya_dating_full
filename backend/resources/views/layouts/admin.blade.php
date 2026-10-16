@@ -265,6 +265,9 @@
                 $openReports = \App\Models\Report::where('status', 'open')->count();
                 $pendingCounselling = \App\Models\CounsellingRequest::where('status', 'pending')->count();
                 $unreadContact = \App\Models\ContactMessage::whereNull('read_at')->count();
+                $pendingMatchRequests = \App\Models\MatchRequest::where('status', 'pending')->count();
+                $pendingSelfies = \App\Models\Profile::whereNotNull('selfie_path')
+                    ->whereNull('selfie_verified_at')->count();
             @endphp
             <a href="{{ route('admin.dashboard') }}" class="{{ $route === 'admin.dashboard' ? 'active' : '' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
@@ -273,10 +276,16 @@
             <a href="{{ route('admin.users.index') }}" class="{{ str_starts_with($route ?? '', 'admin.users') ? 'active' : '' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
                 Users
+                @if ($pendingSelfies > 0)<span class="pill warn" style="margin-left:auto;" title="Selfies awaiting review">{{ $pendingSelfies }}</span>@endif
             </a>
             <a href="{{ route('admin.matches.index') }}" class="{{ str_starts_with($route ?? '', 'admin.matches') ? 'active' : '' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                 Matches
+            </a>
+            <a href="{{ route('admin.matchRequests.index') }}" class="{{ str_starts_with($route ?? '', 'admin.matchRequests') ? 'active' : '' }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                Match requests
+                @if ($pendingMatchRequests > 0)<span class="pill info" style="margin-left:auto;">{{ $pendingMatchRequests }}</span>@endif
             </a>
             <a href="{{ route('admin.reports.index') }}" class="{{ str_starts_with($route ?? '', 'admin.reports') ? 'active' : '' }}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProfilePhoto;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
@@ -52,6 +54,74 @@ class UserController extends Controller
         $user->email_verified_at = $user->email_verified_at ? null : Carbon::now();
         $user->save();
         return back()->with('status', 'Email verification updated.');
+    }
+
+    public function verifyProfileEmail(User $user)
+    {
+        $profile = $user->profile()->firstOrCreate(['user_id' => $user->id]);
+        $profile->email_verified = ! $profile->email_verified;
+        $profile->save();
+        if ($profile->email_verified && ! $user->email_verified_at) {
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+        }
+        return back()->with('status', $profile->email_verified ? 'Profile email marked verified.' : 'Profile email verification removed.');
+    }
+
+    public function verifyProfilePhone(User $user)
+    {
+        $profile = $user->profile()->firstOrCreate(['user_id' => $user->id]);
+        $profile->phone_verified = ! $profile->phone_verified;
+        $profile->save();
+        return back()->with('status', $profile->phone_verified ? 'Phone marked verified.' : 'Phone verification removed.');
+    }
+
+    public function verifySelfie(User $user)
+    {
+        $profile = $user->profile;
+        if (! $profile || ! $profile->selfie_path) {
+            return back()->withErrors(['user' => 'This user has not uploaded a selfie yet.']);
+        }
+        $profile->selfie_verified_at = $profile->selfie_verified_at ? null : Carbon::now();
+        $profile->save();
+        return back()->with('status', $profile->selfie_verified_at ? 'Selfie approved.' : 'Selfie approval revoked.');
+    }
+
+    public function rejectSelfie(User $user)
+    {
+        $profile = $user->profile;
+        if (! $profile || ! $profile->selfie_path) {
+            return back()->withErrors(['user' => 'No selfie on file.']);
+        }
+        Storage::disk('public')->delete($profile->selfie_path);
+        $profile->selfie_path = null;
+        $profile->selfie_verified_at = null;
+        $profile->save();
+        return back()->with('status', 'Selfie deleted. User will be asked to resubmit.');
+    }
+
+    public function deletePhoto(User $user, ProfilePhoto $photo)
+    {
+        if ($photo->profile_id !== $user->profile?->id) {
+            abort(404);
+        }
+        Storage::disk('public')->delete($photo->path);
+        $photo->delete();
+        if ($photo->is_main) {
+            $next = $user->profile->photos()->orderBy('position')->first();
+            $next?->update(['is_main' => true]);
+        }
+        return back()->with('status', 'Photo deleted.');
+    }
+
+    public function impersonate(Request $request, User $user)
+    {
+        if ($user->is_admin) {
+            return back()->withErrors(['user' => 'Cannot issue an impersonation token for another admin.']);
+        }
+        $user->tokens()->where('name', 'admin-impersonation')->delete();
+        $token = $user->createToken('admin-impersonation', ['*'], Carbon::now()->addHours(2))->plainTextToken;
+        return back()->with('impersonation_token', $token);
     }
 
     public function suspend(User $user)

@@ -20,6 +20,7 @@ class Profile extends Model
         'admin_contact_consent' => 'boolean',
         'email_verified' => 'boolean',
         'phone_verified' => 'boolean',
+        'selfie_verified_at' => 'datetime',
         'kids_count' => 'integer',
         'age_min' => 'integer',
         'age_max' => 'integer',

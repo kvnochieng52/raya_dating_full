@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageCo
 use App\Http\Controllers\Admin\CounsellingController as AdminCounsellingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MatchController as AdminMatchController;
+use App\Http\Controllers\Admin\MatchRequestController as AdminMatchRequestController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -37,9 +38,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('users/export',                [AdminUserController::class, 'export'])->name('users.export');
         Route::get('users/{user}',                [AdminUserController::class, 'show'])->name('users.show');
         Route::post('users/{user}/verify',        [AdminUserController::class, 'verify'])->name('users.verify');
+        Route::post('users/{user}/verify-profile-email', [AdminUserController::class, 'verifyProfileEmail'])->name('users.verifyProfileEmail');
+        Route::post('users/{user}/verify-profile-phone', [AdminUserController::class, 'verifyProfilePhone'])->name('users.verifyProfilePhone');
+        Route::post('users/{user}/verify-selfie', [AdminUserController::class, 'verifySelfie'])->name('users.verifySelfie');
+        Route::post('users/{user}/reject-selfie', [AdminUserController::class, 'rejectSelfie'])->name('users.rejectSelfie');
+        Route::delete('users/{user}/photos/{photo}', [AdminUserController::class, 'deletePhoto'])->name('users.deletePhoto');
+        Route::post('users/{user}/impersonate',   [AdminUserController::class, 'impersonate'])->name('users.impersonate');
         Route::post('users/{user}/suspend',       [AdminUserController::class, 'suspend'])->name('users.suspend');
         Route::post('users/{user}/toggle-admin',  [AdminUserController::class, 'toggleAdmin'])->name('users.toggleAdmin');
         Route::delete('users/{user}',             [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+        Route::get('match-requests',                 [AdminMatchRequestController::class, 'index'])->name('matchRequests.index');
+        Route::get('match-requests/{matchRequest}',  [AdminMatchRequestController::class, 'show'])->name('matchRequests.show');
+        Route::post('match-requests/{matchRequest}', [AdminMatchRequestController::class, 'update'])->name('matchRequests.update');
 
         Route::get('matches',          [AdminMatchController::class, 'index'])->name('matches.index');
         Route::get('matches/{match}',  [AdminMatchController::class, 'show'])->name('matches.show');
