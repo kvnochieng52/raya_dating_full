@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -19,6 +20,11 @@ class ContactController extends Controller
             'email'   => ['required', 'email', 'max:200'],
             'subject' => ['required', 'string', 'max:100'],
             'message' => ['required', 'string', 'max:3000'],
+        ]);
+
+        ContactMessage::create($data + [
+            'ip_address' => $request->ip(),
+            'user_agent' => substr((string)$request->userAgent(), 0, 500),
         ]);
 
         Mail::raw(
