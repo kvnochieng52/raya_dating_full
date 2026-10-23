@@ -89,14 +89,8 @@ class DiscoveryController extends Controller
 
         $candidates = $query->limit($limit * 3)->get();
 
-        $results = $candidates->map(function (Profile $p) {
-            $arr = $p->toArray();
-            $arr['age'] = $p->birth_date ? $p->birth_date->age : null;
-            return $arr;
-        });
-
         return response()->json([
-            'profiles' => $results->take($limit)->values(),
+            'profiles' => $candidates->take($limit)->values(),
         ]);
     }
 

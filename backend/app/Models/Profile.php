@@ -28,7 +28,7 @@ class Profile extends Model
         'interests' => 'array',
     ];
 
-    protected $appends = ['selfie_url', 'selfie_uploaded'];
+    protected $appends = ['selfie_url', 'selfie_uploaded', 'age'];
 
     public function user(): BelongsTo
     {
@@ -63,5 +63,10 @@ class Profile extends Model
     protected function selfieUploaded(): Attribute
     {
         return Attribute::get(fn (): bool => $this->selfie_path !== null);
+    }
+
+    protected function age(): Attribute
+    {
+        return Attribute::get(fn (): ?int => $this->birth_date?->age);
     }
 }
