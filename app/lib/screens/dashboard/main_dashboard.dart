@@ -697,18 +697,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadProfileHeader() async {
     try {
-      final cached = await AuthService.getCachedUser();
-      if (mounted && cached != null) {
-        setState(() => _displayName = cached['name'] as String?);
-      }
       final response = await ProfileService.getProfile();
+      if (!mounted) return;
       final profile = response['profile'] as Map<String, dynamic>?;
-      if (profile == null || !mounted) return;
 
-      // Prefer nickname; fall back to user's name.
-      final nickname = (profile['nickname'] as String?)?.trim();
+      final nickname = (profile?['nickname'] as String?)?.trim();
+      final user = profile?['user'] as Map<String, dynamic>?;
+      final fullName = (user?['name'] as String?)?.trim();
+
       String? avatar;
-      final photos = (profile['photos'] as List?) ?? const [];
+      final photos = (profile?['photos'] as List?) ?? const [];
       for (final p in photos) {
         if (p is Map<String, dynamic> && (p['is_main'] == true)) {
           avatar = p['url'] as String?;
@@ -721,9 +719,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       setState(() {
         _avatarUrl = avatar;
-        if (nickname != null && nickname.isNotEmpty) {
-          _displayName = nickname;
-        }
+        _displayName = (nickname != null && nickname.isNotEmpty)
+            ? nickname
+            : (fullName != null && fullName.isNotEmpty ? fullName : null);
       });
     } catch (_) {
       // Silent — header just falls back to the logo placeholder.

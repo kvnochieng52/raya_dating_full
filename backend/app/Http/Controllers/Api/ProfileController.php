@@ -45,7 +45,7 @@ class ProfileController extends Controller
     public function show(Request $request): JsonResponse
     {
         $profile = $this->profileFor($request);
-        $profile->load('photos');
+        $profile->load(['photos', 'user:id,name,email']);
 
         return response()->json(['profile' => $profile]);
     }
