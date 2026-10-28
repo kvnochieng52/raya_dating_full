@@ -31,28 +31,23 @@ class AuthState extends ChangeNotifier {
       return;
     }
 
-    // Validate the stored token against the server.
-    // On 401 → token is stale/invalid, clear session.
-    // On network error → assume still logged in (offline mode).
+    // We trust the locally stored token at bootstrap and keep the user
+    // signed in. If `/me` is unreachable or transiently rejected (401 after
+    // a deploy that clears personal_access_tokens, flaky network, etc.) we
+    // fall back to cached state instead of forcing them to log in again.
+    // Explicit logout is the only path that clears the session.
     try {
-      final me = await AuthService.refreshMe(throwOnUnauth: true);
+      final me = await AuthService.refreshMe();
       if (me != null) {
         final profile = me['profile'] as Map<String, dynamic>?;
         _completedStep = (profile?['completed_step'] as num?)?.toInt() ?? 0;
       } else {
         _completedStep = await AuthService.getCompletedStep();
       }
-      _isAuthenticated = true;
-    } on AuthException {
-      // Token rejected by server — wipe local session.
-      await AuthService.logout();
-      _isAuthenticated = false;
-      _completedStep = 0;
     } catch (_) {
-      // Unexpected error — fall back to cached state.
-      _isAuthenticated = true;
       _completedStep = await AuthService.getCompletedStep();
     }
+    _isAuthenticated = true;
 
     _initialized = true;
     notifyListeners();
