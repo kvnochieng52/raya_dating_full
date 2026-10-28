@@ -32,9 +32,13 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 525600),
+    // Admin dashboard was hitting 419 Page Expired after short idle windows
+    // because deployers were setting SESSION_LIFETIME=120. We now enforce a
+    // 1-year floor regardless of env, so a stale/short env value cannot
+    // silently shorten the session.
+    'lifetime' => max((int) env('SESSION_LIFETIME', 525600), 525600),
 
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
+    'expire_on_close' => false,
 
     /*
     |--------------------------------------------------------------------------
